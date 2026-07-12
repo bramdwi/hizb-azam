@@ -1,0 +1,340 @@
+/* =========================================================
+   Token system
+   Color:
+     --parchment       #F5EFE1  background, off-white/cream
+     --parchment-deep  #EAE1CC  panel/card surface
+     --ink              #2B2320  primary text (warm near-black)
+     --ink-soft         #6B5F4F  secondary text
+     --maroon           #3A1A1A  header / active surface
+     --gold             #C4944A  accent, active state, ornament
+     --gold-soft        #E4C98F  hover/tint of accent
+   Type:
+     display: "Amiri"  (Arabic-serif, manuscript character) — titles, labels
+     body:    "Lora"    (complementary serif) — UI copy
+   Signature: rub el hizb (8-point star) ornament + ribbon-style day tabs,
+   echoing a bound daily-reading book.
+   ========================================================= */
+
+:root{
+  --parchment: #F5EFE1;
+  --parchment-deep: #EAE1CC;
+  --ink: #2B2320;
+  --ink-soft: #6B5F4F;
+  --maroon: #3A1A1A;
+  --maroon-soft: #4E2626;
+  --gold: #C4944A;
+  --gold-soft: #E4C98F;
+  --shadow: 0 8px 24px rgba(43,35,32,0.18);
+  --radius: 14px;
+}
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+html,body{
+  height:100%;
+  margin:0;
+  background:var(--parchment);
+  color:var(--ink);
+  font-family:"Lora", Georgia, serif;
+  overscroll-behavior:none;
+}
+
+button{ font-family:inherit; }
+
+/* ---------- App shell ---------- */
+#app{
+  height:100dvh;
+  position:relative;
+  overflow:hidden;
+}
+
+/* ---------- Topbar ----------
+   Fixed overlay so the reader can go full-bleed underneath, and the bar
+   can slide out of view for a clean, distraction-free reading mode. */
+.topbar{
+  position:fixed;
+  top:0; left:0; right:0;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding: max(10px, env(safe-area-inset-top)) 12px 10px;
+  background:var(--maroon);
+  color:var(--parchment);
+  box-shadow: var(--shadow);
+  z-index: 15;
+  transition: transform .32s cubic-bezier(.22,.61,.36,1), opacity .32s ease;
+}
+.topbar.hidden{
+  transform: translateY(-100%);
+  opacity:0;
+  pointer-events:none;
+}
+.topbar-title{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  line-height:1.15;
+}
+.topbar-eyebrow{
+  font-family:"Amiri", serif;
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--gold-soft);
+}
+.topbar-page{
+  font-family:"Amiri", serif;
+  font-weight:700;
+  font-size:19px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.icon-btn{
+  appearance:none;
+  border:none;
+  background:transparent;
+  color:var(--parchment);
+  width:40px; height:40px;
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px;
+  text-decoration:none;
+  flex-shrink:0;
+}
+.icon-btn:active{ background:rgba(245,239,225,0.14); }
+
+.hamburger{ display:flex; flex-direction:column; gap:5px; width:20px; }
+.hamburger span{ display:block; height:2px; background:var(--parchment); border-radius:2px; }
+
+/* ---------- Reader / swipe track ----------
+   Fills the entire viewport; the topbar/footbar float on top and can
+   auto-hide, so a hidden page reads edge-to-edge with nothing else on
+   screen. */
+.reader{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  background:var(--parchment-deep);
+}
+.track{
+  height:100%;
+  display:flex;
+  transition: transform .38s cubic-bezier(.22,.61,.36,1);
+  will-change: transform;
+}
+.panel{
+  flex: 0 0 100%;
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
+.panel-frame-wrap{
+  flex:1;
+  position:relative;
+  background:#fff;
+}
+.panel-frame-wrap iframe{
+  width:100%; height:100%; border:0; display:block;
+}
+
+.panel-empty{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  gap:10px;
+  padding: calc(72px + env(safe-area-inset-top)) 24px calc(84px + env(safe-area-inset-bottom));
+  color: var(--ink-soft);
+}
+.panel-empty .ornament{ width:44px; height:44px; color: var(--gold); opacity:.8; }
+.panel-empty h3{
+  font-family:"Amiri", serif;
+  color: var(--ink);
+  margin:0;
+  font-size:20px;
+}
+.panel-empty p{ margin:0; font-size:14px; max-width:32ch; }
+.panel-empty code{
+  background: var(--parchment-deep);
+  padding:2px 6px;
+  border-radius:6px;
+  font-size:12.5px;
+}
+
+/* ---------- Footer nav ---------- */
+.footbar{
+  position:fixed;
+  bottom:0; left:0; right:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding: 8px 14px max(10px, env(safe-area-inset-bottom));
+  background: var(--parchment);
+  border-top: 1px solid rgba(43,35,32,0.10);
+  z-index: 15;
+  transition: transform .32s cubic-bezier(.22,.61,.36,1), opacity .32s ease;
+}
+.footbar.hidden{
+  transform: translateY(100%);
+  opacity:0;
+  pointer-events:none;
+}
+
+/* ---------- Floating chrome-toggle pill ----------
+   Stays reachable even while the bars are hidden, since the reader's
+   iframe content (cross-origin) can swallow taps meant for the app. */
+.chrome-toggle{
+  position:fixed;
+  left:50%;
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  transform: translate(-50%, 12px);
+  width:40px; height:26px;
+  border:none;
+  border-radius:999px;
+  background: var(--maroon);
+  color: var(--gold-soft);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: var(--shadow);
+  z-index:16;
+  opacity:0;
+  pointer-events:none;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.chrome-toggle.show{
+  opacity:.9;
+  pointer-events:auto;
+  transform: translate(-50%, 0);
+}
+.chrome-toggle:active{ opacity:1; }
+.nav-btn{
+  appearance:none;
+  border:none;
+  background: var(--maroon);
+  color: var(--parchment);
+  width:42px; height:42px;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: var(--shadow);
+  flex-shrink:0;
+}
+.nav-btn:disabled{ opacity:.35; box-shadow:none; }
+.nav-btn:active:not(:disabled){ background: var(--maroon-soft); }
+
+.dots{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.dots::-webkit-scrollbar{ display:none; }
+.dot{
+  width:8px; height:8px;
+  border-radius:50%;
+  background: rgba(58,26,26,0.22);
+  flex-shrink:0;
+  transition: all .25s ease;
+}
+.dot.active{
+  background: var(--gold);
+  width:22px;
+  border-radius:5px;
+}
+
+/* ---------- Drawer ---------- */
+.scrim{
+  position:fixed; inset:0;
+  background: rgba(43,35,32,0.45);
+  opacity:0; pointer-events:none;
+  transition: opacity .28s ease;
+  z-index:20;
+}
+.scrim.open{ opacity:1; pointer-events:auto; }
+
+.drawer{
+  position:fixed; top:0; left:0; bottom:0;
+  width:min(82vw, 320px);
+  background: var(--parchment);
+  transform: translateX(-100%);
+  transition: transform .32s cubic-bezier(.22,.61,.36,1);
+  z-index:21;
+  display:flex; flex-direction:column;
+  box-shadow: 4px 0 28px rgba(43,35,32,0.25);
+}
+.drawer.open{ transform: translateX(0); }
+
+.drawer-head{
+  display:flex; align-items:center; gap:10px;
+  padding: max(16px, env(safe-area-inset-top)) 14px 14px;
+  background: var(--maroon);
+  color: var(--parchment);
+}
+.drawer-ornament{ width:26px; height:26px; color: var(--gold); flex-shrink:0; }
+.drawer-ornament svg{ width:100%; height:100%; }
+#drawer-title{
+  font-family:"Amiri", serif;
+  font-size:18px;
+  margin:0;
+  flex:1;
+}
+
+.drawer-list{ overflow-y:auto; padding: 10px 8px 24px; }
+
+.drawer-group-label{
+  font-family:"Amiri", serif;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color: var(--ink-soft);
+  padding: 14px 10px 6px;
+}
+.drawer-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  text-align:left;
+  padding:11px 10px;
+  border:none;
+  background:transparent;
+  border-radius:10px;
+  color: var(--ink);
+  font-size:15.5px;
+  position:relative;
+}
+.drawer-item .ribbon{
+  width:4px; height:20px;
+  border-radius:2px;
+  background: transparent;
+  flex-shrink:0;
+}
+.drawer-item.active{
+  background: var(--parchment-deep);
+  font-weight:600;
+}
+.drawer-item.active .ribbon{ background: var(--gold); }
+.drawer-item:active{ background: var(--parchment-deep); }
+
+/* focus visibility for keyboard users */
+button:focus-visible, a:focus-visible{
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .track, .drawer, .scrim, .dot{ transition:none !important; }
+}
+
+@media (min-width: 720px){
+  .drawer{ width:300px; }
+  .panel-empty{ padding-left: 24px; padding-right: 24px; }
+}

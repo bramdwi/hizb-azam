@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Wirid Harian</title>
+<meta name="description" content="Buku digital wirid dan sholawat harian" />
+<meta name="theme-color" content="#3A1A1A" />
+
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/icon-192.png" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Wirid Harian" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="scrim" class="scrim"></div>
+
+<!-- ============ DRAWER (hamburger menu) ============ -->
+<nav id="drawer" class="drawer" aria-label="Daftar Isi">
+  <div class="drawer-head">
+    <div class="drawer-ornament" aria-hidden="true">
+      <svg viewBox="0 0 100 100"><use href="#rub-el-hizb"></use></svg>
+    </div>
+    <h2 id="drawer-title">Daftar Isi</h2>
+    <button id="drawerClose" class="icon-btn" aria-label="Tutup menu">✕</button>
+  </div>
+  <div id="drawerList" class="drawer-list"></div>
+</nav>
+
+<!-- ============ APP SHELL ============ -->
+<div id="app">
+
+  <header class="topbar">
+    <button id="menuBtn" class="icon-btn" aria-label="Buka menu" aria-controls="drawer" aria-expanded="false">
+      <span class="hamburger"><span></span><span></span><span></span></span>
+    </button>
+    <div class="topbar-title">
+      <span class="topbar-eyebrow">Wirid Harian</span>
+      <span id="pageTitle" class="topbar-page">Memuat…</span>
+    </div>
+  </header>
+
+  <main id="reader" class="reader">
+    <div id="track" class="track"><!-- panels disuntik oleh app.js --></div>
+  </main>
+
+  <footer class="footbar">
+    <button id="prevBtn" class="nav-btn" aria-label="Sebelumnya">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 4l-8 8 8 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <div id="dots" class="dots"></div>
+
+    <button id="nextBtn" class="nav-btn" aria-label="Berikutnya">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </footer>
+
+  <button id="chromeToggle" class="chrome-toggle" aria-label="Tampilkan menu">
+    <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<!-- shared inline SVG symbols -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="rub-el-hizb" viewBox="0 0 100 100">
+      <polygon points="50,8 76,24 92,50 76,76 50,92 24,76 8,50 24,24" fill="none" stroke="currentColor" stroke-width="3"/>
+      <polygon points="50,20 74,35 74,65 50,80 26,65 26,35" fill="none" stroke="currentColor" stroke-width="3" transform="rotate(45 50 50)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

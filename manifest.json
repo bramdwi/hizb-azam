@@ -1,0 +1,17 @@
+{
+  "name": "Wirid Harian",
+  "short_name": "Wirid Harian",
+  "description": "Buku digital wirid dan sholawat harian — Jumat s.d. Kamis, Manzil, Sholawat Tunjina, Sholawat 40",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5EFE1",
+  "theme_color": "#3A1A1A",
+  "lang": "id",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
